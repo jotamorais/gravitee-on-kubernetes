@@ -1,4 +1,4 @@
-# Gravitee.io cluster deployment on top of Kubernetes
+# Gravitee.io on top of Kubernetes
 
 This repository has the intention to host scripts to easy the task of deploying (Gravitee.io)[https://gravitee.io] stack and its dependencies on top of (Kubernetes)[https://kubernetes.io/] with different cloud providers (Google's GKE, Amazon's AWS, Microsoft's Azure) or on-premises.
 
