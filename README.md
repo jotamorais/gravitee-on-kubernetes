@@ -2,7 +2,7 @@
 
 This repository has the intention to host scripts to easy the task of deploying [Gravitee.io](https://gravitee.io) stack and its dependencies on top of [Kubernetes](https://kubernetes.io) with different cloud providers (Google's GKE, Amazon's AWS, Microsoft's Azure) or on-premises.
 
-I tried as much as could, to follow best practices for clusters creation and distributed computing but this is an ongoing effort in an attempt to create "production-grade" deployment scripts. If you spot areas of improvement or room for additional features, please share with the community or submit a merge request adding your contributions.
+I tried as much as I could, to follow best practices for clusters creation and distributed computing but this is an ongoing effort in an attempt to create "production-grade" deployment scripts. If you spot areas of improvement or room for additional features, please share with the community or submit a merge request adding your contributions.
 
 Gravitee
 [Gravitee.io](https://gravitee.io) is made of [3 major components:](https://docs.gravitee.io/apim_overview_components.html)
