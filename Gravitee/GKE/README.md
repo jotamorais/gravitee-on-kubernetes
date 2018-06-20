@@ -1,4 +1,4 @@
-** Following variables must be filled out before running [deploy.sh](deploy.sh).
+** Following variables must be filled out before running [deploy.sh](../../deploy-to-gke.sh).
 
 # Input variables
 ## For MongoDB
