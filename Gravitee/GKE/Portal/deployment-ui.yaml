@@ -1,0 +1,42 @@
+--- 
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata: 
+  name: gravitee-ui-deployment
+spec: 
+  replicas: PORTAL_REPLICAS_QTY
+  selector: 
+    matchLabels: 
+      app: gravitee-ui
+  template: 
+    metadata: 
+      labels: 
+        app: gravitee-ui
+      name: gravitee-ui-deployment
+    spec: 
+      containers: 
+        - 
+          env:
+            -
+              name: MGMT_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: mgmt.api.url
+                  name: ui-config
+            -
+              name: DS_ELASTIC_HOST
+              valueFrom:
+                secretKeyRef:
+                  key: ds.elastic.host
+                  name: elasticsearchsecret
+            -
+              name: DS_ELASTIC_PORT
+              valueFrom:
+                secretKeyRef:
+                  key: ds.elastic.port
+                  name: elasticsearchsecret
+          image: graviteeio/management-ui
+          name: gravitee-management-ui
+          ports: 
+            - 
+              containerPort: 80

@@ -1,0 +1,78 @@
+--- 
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata: 
+  name: gravitee-management-api-deployment
+spec: 
+  replicas: GRAVITEE_MANAGEMENT_REPLICAS_QTY
+  selector: 
+    matchLabels: 
+      app: gravitee-management-api
+  template: 
+    metadata: 
+      labels: 
+        app: gravitee-management-api
+      name: gravitee-management-api-deployment
+    spec: 
+      containers: 
+        - 
+          env: 
+            - 
+              name: GRAVITEE_MANAGEMENT_MONGODB_USERNAME
+              valueFrom: 
+                secretKeyRef: 
+                  key: gravitee.management.mongodb.username
+                  name: mongosecret
+            - 
+              name: GRAVITEE_MANAGEMENT_MONGODB_PASSWORD
+              valueFrom: 
+                secretKeyRef: 
+                  key: gravitee.management.mongodb.password
+                  name: mongosecret
+            - 
+              name: GRAVITEE_MANAGEMENT_MONGODB_DBNAME
+              valueFrom: 
+                secretKeyRef: 
+                  key: gravitee.management.mongodb.dbname
+                  name: mongosecret
+            - 
+              name: GRAVITEE_MANAGEMENT_MONGODB_HOST
+              valueFrom: 
+                secretKeyRef: 
+                  key: gravitee.management.mongodb.host
+                  name: mongosecret
+            - 
+              name: GRAVITEE_MANAGEMENT_MONGODB_PORT
+              valueFrom: 
+                secretKeyRef: 
+                  key: gravitee.management.mongodb.port
+                  name: mongosecret
+            -
+              name: DS_MONGODB_HOST
+              valueFrom:
+                secretKeyRef:
+                  key: ds.mongodb.host
+                  name: mongosecret
+            -
+              name: DS_MONGODB_PORT
+              valueFrom:
+                secretKeyRef:
+                  key: ds.mongodb.host
+                  name: mongosecret
+            -
+              name: DS_ELASTIC_HOST
+              valueFrom:
+                secretKeyRef:
+                  key: ds.elastic.host
+                  name: elasticsearchsecret
+            -
+              name: DS_ELASTIC_PORT
+              valueFrom:
+                secretKeyRef:
+                  key: ds.elastic.port
+                  name: elasticsearchsecret
+          image: graviteeio/management-api
+          name: gravitee-management-api
+          ports: 
+            - 
+              containerPort: 8083
