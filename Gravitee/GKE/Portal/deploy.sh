@@ -19,8 +19,8 @@ echo
 
 sleep 30 # Waiting service to be expose (GKE Load Balancer might take sometime to do it)
 
-GRAVITEE_UI_HOST=$(kubectl get svc/service-gravitee-ui -o yaml | grep ip | cut -d':' -f 2 | cut -d' ' -f 2)
-GRAVITEE_UI_PORT=$(kubectl get svc/service-gravitee-ui -o yaml | grep port | cut -d':' -f 2 | cut -d' ' -f 2)
+export GRAVITEE_UI_HOST=$(kubectl get svc/service-gravitee-ui -o yaml | grep ip | cut -d':' -f 2 | cut -d' ' -f 2)
+export GRAVITEE_UI_PORT=$(kubectl get svc/service-gravitee-ui -o yaml | grep port | cut -d':' -f 2 | cut -d' ' -f 2)
 echo "Gravitee Portal (UI) is exposed at http://${GRAVITEE_UI_HOST}:${GRAVITEE_UI_PORT}"
 
-rm -rf /tmp
+rm /tmp/deployment-ui.yaml

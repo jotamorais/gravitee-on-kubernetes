@@ -1,15 +1,14 @@
 # Add Gravitee MongoDB user
-mongo admin -u MONGO_ROOT_USER -p MONGO_ROOT_PASSWORD
-use GRAVITEE_MONGO_DBNAME;
+mongo admin -u main_admin -p abc123
+use gravitee;
 var user = {
- "user" : "GRAVITEE_MONGO_USERNAME",
- "pwd" : "GRAVITEE_MONGO_PASSWORD",
+ "user" : "gravitee",
+ "pwd" : "gravitee123",
  roles : [
      {
          "role" : "readWrite",
-         "db" : "GRAVITEE_MONGO_DBNAME"
+         "db" : "gravitee"
      }
  ]
 }
 db.createUser(user);
-exit

@@ -12,21 +12,18 @@
 # GRAVITEE_MONGO_PASSWORD
 # =========================================================
 # Example:
-# $ MONGO_ROOT_USER=main_admin
-# $ MONGO_ROOT_PASSWORD=abc123
-# $ MONGO_DEFAULT_REGION_ZONE=us-central1-a
-# $ MONGO_CLUSTER_NAME=gke-mongodb-cluster
-# $ GRAVITEE_MONGO_DBNAME=gravitee
-# $ GRAVITEE_MONGO_USERNAME=gravitee
-# $ GRAVITEE_MONGO_PASSWORD=gravitee123
+# $ export MONGO_ROOT_USER=main_admin
+# $ export MONGO_ROOT_PASSWORD=abc123
+# $ export MONGO_DEFAULT_REGION_ZONE=us-central1-a
+# $ export MONGO_CLUSTER_NAME=gke-mongodb-cluster
+# $ export GRAVITEE_MONGO_DBNAME=gravitee
+# $ export GRAVITEE_MONGO_USERNAME=gravitee
+# $ export GRAVITEE_MONGO_PASSWORD=gravitee123
 ##
 
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 echo Parent path is "${parent_path}"
 cd "${parent_path}"
-
-NEW_PASSWORD="${MONGO_ROOT_PASSWORD}"
-
 
 echo Setting default region to "${MONGO_DEFAULT_REGION_ZONE}"
 
@@ -188,7 +185,7 @@ sed -i -e "s|GRAVITEE_MONGO_PASSWORD|${GRAVITEE_MONGO_PASSWORD:-default gravitee
 
 # Create the Admin User (this will automatically disable the localhost exception)
 echo "Creating user: 'main_admin'"
-kubectl exec mongos-router-0 -c mongos-container -- mongo --eval 'db.getSiblingDB("admin").createUser({user:"'"${MONGO_ROOT_USER}"'",pwd:"'"${MONGO_ROOT_PASSWORD}"'",roles:[{role:"root",db:"admin"}]});exit;'
+kubectl exec mongos-router-0 -c mongos-container -- mongo --eval 'db.getSiblingDB("admin").createUser({user:"'"${MONGO_ROOT_USER}"'",pwd:"'"${MONGO_ROOT_PASSWORD}"'",roles:[{role:"root",db:"admin"}]});quit();'
 
 echo "Creating user: '${GRAVITEE_MONGO_USERNAME}'"
 kubectl exec -it mongos-router-0 -c mongos-container bash < /tmp/add-gravitee-mongo-user.sh
@@ -206,7 +203,9 @@ kubectl get persistentvolumes
 echo
 kubectl get all 
 echo
+sleep 30 # Waiting a little bit more to get the externail Load Balancer IP
 
-MONGO_HOST=$(kubectl get svc/mongo -o yaml | grep ip | cut -d':' -f 2 | cut -d' ' -f 2)
-MONGO_PORT=$(kubectl get svc/mongo -o yaml | grep port | cut -d':' -f 2 | cut -d' ' -f 2)
+
+export MONGO_HOST=$(kubectl get svc/mongo -o yaml | grep ip | cut -d':' -f 2 | cut -d',' -f 3 | awk NF)
+export MONGO_PORT=$(kubectl get svc/mongo -o yaml | grep port | cut -d':' -f 2 | cut -d',' -f 3 | awk NF)
 echo "MongoDB is exposed at http://${MONGO_HOST}:${MONGO_PORT}"

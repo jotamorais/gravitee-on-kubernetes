@@ -15,16 +15,16 @@
 # GRAVITEE_MONGO_PASSWORD
 # =========================================================
 # Example:
-# $ MONGO_ROOT_USER=main_admin
-# $ MONGO_ROOT_PASSWORD=abc123
-# $ MONGO_DEFAULT_REGION_ZONE=us-central1-a
-# $ MONGO_CLUSTER_NAME=gke-mongodb-cluster
-# $ ELASTIC_CLUSTER_NAME=gke-elastic-cluster
-# $ GRAVITEE_DEFAULT_REGION_ZONE=us-west1-a
-# $ GRAVITEE_CLUSTER_NAME=apim-gravitee-cluster
-# $ GRAVITEE_MONGO_DBNAME=gravitee
-# $ GRAVITEE_MONGO_USERNAME=gravitee
-# $ GRAVITEE_MONGO_PASSWORD=gravitee123
+# $ export MONGO_ROOT_USER=main_admin
+# $ export MONGO_ROOT_PASSWORD=abc123
+# $ export MONGO_DEFAULT_REGION_ZONE=us-central1-a
+# $ export MONGO_CLUSTER_NAME=gke-mongodb-cluster
+# $ export ELASTIC_CLUSTER_NAME=gke-elastic-cluster
+# $ export GRAVITEE_DEFAULT_REGION_ZONE=us-west1-a
+# $ export GRAVITEE_CLUSTER_NAME=apim-gravitee-cluster
+# $ export GRAVITEE_MONGO_DBNAME=gravitee
+# $ export GRAVITEE_MONGO_USERNAME=gravitee
+# $ export GRAVITEE_MONGO_PASSWORD=gravitee123
 ##
 
 # Update secrets and config files with values from user input (terminal variables)
@@ -60,8 +60,8 @@ kubectl create -f /tmp/deployment-gateway.yaml
 kubectl create -f ./Gravitee/GKE/Gateway/expose-gravitee-gateway.yaml
 
 # Export IP address of exposed Gravitee Gateway service
-GRAVITEE_GATEWAY_HOST=$(kubectl get svc/service-gravitee-gateway -o yaml | grep ip | cut -d':' -f 2 | cut -d' ' -f 2)
-GRAVITEE_GATEWAY_PORT=$(kubectl get svc/service-gravitee-gateway -o yaml | grep port | cut -d':' -f 2 | cut -d' ' -f 2)
+export GRAVITEE_GATEWAY_HOST=$(kubectl get svc/service-gravitee-gateway -o yaml | grep ip | cut -d':' -f 2 | cut -d' ' -f 2)
+export GRAVITEE_GATEWAY_PORT=$(kubectl get svc/service-gravitee-gateway -o yaml | grep port | cut -d':' -f 2 | cut -d' ' -f 2)
 
 # Check
 kubectl get all

@@ -7,8 +7,8 @@
 # ELASTIC_CLUSTER_NAME
 # =========================================================
 # Example:
-# $ ELASTIC_DEFAULT_REGION_ZONE=us-east4-a
-# $ ELASTIC_CLUSTER_NAME=gke-elasticsearch-cluster
+# $ export ELASTIC_DEFAULT_REGION_ZONE=us-east4-a
+# $ export ELASTIC_CLUSTER_NAME=gke-elasticsearch-cluster
 ##
 
 # Set default region/zone
@@ -37,6 +37,6 @@ kubectl create -f kibana-svc.yaml
 
 sleep 30 # Waiting service to be expose (GKE Load Balancer might take sometime to do it)
 
-ELASTIC_HOST=$(kubectl get svc/elasticsearch -o yaml | grep ip | cut -d':' -f 2 | cut -d' ' -f 2)
-ELASTIC_PORT=$(kubectl get svc/elasticsearch -o yaml | grep port | cut -d':' -f 2 | cut -d' ' -f 2)
+export ELASTIC_HOST=$(kubectl get svc/elasticsearch -o yaml | grep ip | cut -d':' -f 2 | cut -d' ' -f 2)
+export ELASTIC_PORT=$(kubectl get svc/elasticsearch -o yaml | grep port | cut -d':' -f 2 | cut -d' ' -f 2)
 echo "MongoDB is exposed at http://${ELASTIC_HOST}:${ELASTIC_PORT}"

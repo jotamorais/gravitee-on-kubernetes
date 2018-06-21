@@ -18,8 +18,8 @@ echo
 
 sleep 30 # Waiting service to be expose (GKE Load Balancer might take sometime to do it)
 
-GRAVITEE_MANAGEMENT_HOST=$(kubectl get svc/service-gravitee-management-api -o yaml | grep ip | cut -d':' -f 2 | cut -d' ' -f 2)
-GRAVITEE_MANAGEMENT_PORT=$(kubectl get svc/service-gravitee-management-api -o yaml | grep port | cut -d':' -f 2 | cut -d' ' -f 2)
+export GRAVITEE_MANAGEMENT_HOST=$(kubectl get svc/service-gravitee-management-api -o yaml | grep ip | cut -d':' -f 2 | cut -d' ' -f 2)
+export GRAVITEE_MANAGEMENT_PORT=$(kubectl get svc/service-gravitee-management-api -o yaml | grep port | cut -d':' -f 2 | cut -d' ' -f 2)
 echo "Gravitee Management API is exposed at http://${GRAVITEE_MANAGEMENT_HOST}:${GRAVITEE_MANAGEMENT_PORT}"
 
-rm -rf /tmp
+rm /tmp/deployment-management-api.yaml
