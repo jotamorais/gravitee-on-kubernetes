@@ -15,17 +15,17 @@
 gcloud config set compute/zone $ELASTIC_DEFAULT_REGION_ZONE
 
 # Create new GKE Kubernetes cluster
-gcloud container clusters create $ELASTIC_CLUSTER_NAME --machine-type="n1-standard-2"
+gcloud container clusters create "${ELASTIC_CLUSTER_NAME}" --machine-type="n1-standard-2"
 
 # Deploy...
-kubectl create -f es-discovery-svc.yaml
-kubectl create -f es-svc.yaml
-kubectl create -f es-master.yaml
-kubectl rollout status -f es-master.yaml
-kubectl create -f es-client.yaml
-kubectl rollout status -f es-client.yaml
-kubectl create -f es-data.yaml
-kubectl rollout status -f es-data.yaml
+kubectl create -f ./Elasticsearch/GKE/Elasticsearch/es-discovery-svc.yaml
+kubectl create -f ./Elasticsearch/GKE/Elasticsearch/es-svc.yaml
+kubectl create -f ./Elasticsearch/GKE/Elasticsearch/es-master.yaml
+kubectl rollout status -f ./Elasticsearch/GKE/Elasticsearch/es-master.yaml
+kubectl create -f ./Elasticsearch/GKE/Elasticsearch/es-client.yaml
+kubectl rollout status -f ./Elasticsearch/GKE/Elasticsearch/es-client.yaml
+kubectl create -f ./Elasticsearch/GKE/Elasticsearch/es-data.yaml
+kubectl rollout status -f ./Elasticsearch/GKE/Elasticsearch/es-data.yaml
 
 # Checks status
 kubectl get svc,deployment,pods -l component=elasticsearch

@@ -10,10 +10,10 @@ MongoDB/GKE/Mongo/scripts/deploy.sh
 Elasticsearch/GKE/Elasticsearch/deploy.sh
 
 # Deploy Gravitee Gateway
-Gravitee/GKE/Gateway/deploy.sh
+./Gravitee/GKE/Gateway/deploy.sh
 
 # Deploy Gravitee Management API
-Gravitee/GKE/Management-API/deploy.sh
+./Gravitee/GKE/Management-API/deploy.sh
 
 # Deploy Gravitee Portal (UI)
-Gravitee/GKE/Portal/deploy.sh
+./Gravitee/GKE/Portal/deploy.sh

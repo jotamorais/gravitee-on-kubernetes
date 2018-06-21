@@ -180,18 +180,19 @@ kubectl exec mongos-router-0 -c mongos-container -- mongo --eval 'sh.addShard("S
 sleep 3
 
 # Look up and replace placeholders with variable values
-sed -i -e "s|MONGO_ROOT_USER|${MONGO_ROOT_USER:-default main_admin}|g" ./MongoDB/GKE/Mongo/scripts/add-gravitee-mongo-user.sh
-sed -i -e "s|MONGO_ROOT_PASSWORD|${MONGO_ROOT_PASSWORD:-default abc123}|g" ./MongoDB/GKE/Mongo/scripts/add-gravitee-mongo-user.sh
-sed -i -e "s|GRAVITEE_MONGO_DBNAME|${GRAVITEE_MONGO_DBNAME:-default gravitee}|g" ./MongoDB/GKE/Mongo/scripts/add-gravitee-mongo-user.sh
-sed -i -e "s|GRAVITEE_MONGO_USERNAME|${GRAVITEE_MONGO_USERNAME:-default gravitee}|g" ./MongoDB/GKE/Mongo/scripts/add-gravitee-mongo-user.sh
-sed -i -e "s|GRAVITEE_MONGO_PASSWORD|${GRAVITEE_MONGO_PASSWORD:-default gravitee123}|g" ./MongoDB/GKE/Mongo/scripts/add-gravitee-mongo-user.sh
+sed -i -e "s|MONGO_ROOT_USER|${MONGO_ROOT_USER:-default main_admin}|g" ./MongoDB/GKE/Mongo/scripts/add-gravitee-mongo-user.sh > /tmp/add-gravitee-mongo-user.sh
+sed -i -e "s|MONGO_ROOT_PASSWORD|${MONGO_ROOT_PASSWORD:-default abc123}|g" ./MongoDB/GKE/Mongo/scripts/add-gravitee-mongo-user.sh > /tmp/add-gravitee-mongo-user.sh
+sed -i -e "s|GRAVITEE_MONGO_DBNAME|${GRAVITEE_MONGO_DBNAME:-default gravitee}|g" ./MongoDB/GKE/Mongo/scripts/add-gravitee-mongo-user.sh > /tmp/add-gravitee-mongo-user.sh
+sed -i -e "s|GRAVITEE_MONGO_USERNAME|${GRAVITEE_MONGO_USERNAME:-default gravitee}|g" ./MongoDB/GKE/Mongo/scripts/add-gravitee-mongo-user.sh > /tmp/add-gravitee-mongo-user.sh
+sed -i -e "s|GRAVITEE_MONGO_PASSWORD|${GRAVITEE_MONGO_PASSWORD:-default gravitee123}|g" ./MongoDB/GKE/Mongo/scripts/add-gravitee-mongo-user.sh > /tmp/add-gravitee-mongo-user.sh
 
 # Create the Admin User (this will automatically disable the localhost exception)
 echo "Creating user: 'main_admin'"
 kubectl exec mongos-router-0 -c mongos-container -- mongo --eval 'db.getSiblingDB("admin").createUser({user:"'"${MONGO_ROOT_USER}"'",pwd:"'"${MONGO_ROOT_PASSWORD}"'",roles:[{role:"root",db:"admin"}]});exit;'
 
 echo "Creating user: '${GRAVITEE_MONGO_USERNAME}'"
-kubectl exec -it mongos-router-0 -c mongos-container bash < ./MongoDB/GKE/Mongo/scripts/add-gravitee-mongo-user.sh
+kubectl exec -it mongos-router-0 -c mongos-container bash < /tmp/add-gravitee-mongo-user.sh
+rm /tmp/add-gravitee-mongo-user.sh
 echo
 
 # Expose MongoDB using LoadBalancer

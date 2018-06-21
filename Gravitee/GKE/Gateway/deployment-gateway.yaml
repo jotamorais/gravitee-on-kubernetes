@@ -4,7 +4,7 @@ kind: Deployment
 metadata: 
   name: gravitee-gateway-deployment
 spec: 
-  replicas: GRAVITEE_GATEWAY_REPLICAS_QTY
+  replicas: 2
   selector: 
     matchLabels: 
       app: gravitee-gateway

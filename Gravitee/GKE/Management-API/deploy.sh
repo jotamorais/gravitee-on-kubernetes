@@ -6,11 +6,11 @@
 gcloud config set compute/zone $GRAVITEE_DEFAULT_REGION_ZONE
 
 # Update deployment file with the desired quantity of replicas
-sed -i -e "s|GRAVITEE_MANAGEMENT_REPLICAS_QTY|${GRAVITEE_MANAGEMENT_REPLICAS_QTY}|g" ./deployment-management-api.yaml
+sed -i -e "s|GRAVITEE_MANAGEMENT_REPLICAS_QTY|${GRAVITEE_MANAGEMENT_REPLICAS_QTY}|g" ./Gravitee/GKE/Management-API/deployment-management-api.yaml > /tmp/deployment-management-api.yaml
 
 # Deploy...
-kubectl create -f deployment-management-api.yaml
-kubectl create -f expose-gravitee-management-api.yaml
+kubectl create -f /tmp/deployment-management-api.yaml
+kubectl create -f ./Gravitee/GKE/Management-API/expose-gravitee-management-api.yaml
 
 # Check
 kubectl get all
@@ -21,3 +21,5 @@ sleep 30 # Waiting service to be expose (GKE Load Balancer might take sometime t
 GRAVITEE_MANAGEMENT_HOST=$(kubectl get svc/service-gravitee-management-api -o yaml | grep ip | cut -d':' -f 2 | cut -d' ' -f 2)
 GRAVITEE_MANAGEMENT_PORT=$(kubectl get svc/service-gravitee-management-api -o yaml | grep port | cut -d':' -f 2 | cut -d' ' -f 2)
 echo "Gravitee Management API is exposed at http://${GRAVITEE_MANAGEMENT_HOST}:${GRAVITEE_MANAGEMENT_PORT}"
+
+rm -rf /tmp

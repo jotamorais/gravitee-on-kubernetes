@@ -34,30 +34,30 @@ sed -i -e "s|GRAVITEE_MONGO_USERNAME|${GRAVITEE_MONGO_USERNAME:-default gravitee
 -e "s|GRAVITEE_MONGO_DBNAME|${GRAVITEE_MONGO_DBNAME:-default gravitee}|g" \ 
 -e "s|GRAVITEE_MONGO_HOST|${MONGO_HOST}|g" \ 
 -e "s|GRAVITEE_MONGO_PORT|${MONGO_PORT:-default 27017}|g" \ 
-./mongo-secret.yaml
+./Gravitee/GKE/Gateway/mongo-secret.yaml > /tmp/mongo-secret.yaml
 
 # Elasticsearch
 sed -i -e "s|GRAVITEE_ELASTIC_HOST|${ELASTIC_HOST}|g" \ 
 -e "s|GRAVITEE_ELASTIC_PORT|${ELASTIC_PORT:-default 9200}|g" \ 
-./elastic-search-secret.yaml
+./Gravitee/GKE/Gateway/elastic-search-secret.yaml > /tmp/elastic-search-secret.yaml
 
 # Update Gateway replicas quantity (default is 2)
-sed -i -e "s|GRAVITEE_GATEWAY_REPLICAS_QTY|${GRAVITEE_GATEWAY_REPLICAS_QTY:-default 2}|g" ./deployment-gateway.yaml
+sed -i -e "s|GRAVITEE_GATEWAY_REPLICAS_QTY|${GRAVITEE_GATEWAY_REPLICAS_QTY:-default 2}|g" ./Gravitee/GKE/Gateway/deployment-gateway.yaml > deployment-gateway.yaml
 
 # Set default region/zone
 gcloud config set compute/zone $GRAVITEE_DEFAULT_REGION_ZONE
 
 # Create new GKE Kubernetes cluster
-gcloud container clusters create $GRAVITEE_CLUSTER_NAME --image-type=UBUNTU --machine-type=n1-standard-1
+gcloud container clusters create "${GRAVITEE_CLUSTER_NAME}" --image-type=UBUNTU --machine-type=n1-standard-1
 
 # Switch context to the newly created cluster
 kubectl config use-context $GRAVITEE_CLUSTER_NAME
 
 # Deploy...
-kubectl create -f ./mongo-secret.yaml
-kubectl create -f ./elastic-search-secret.yaml
-kubectl create -f ./deployment-gateway.yaml
-kubectl create -f ./expose-gravitee-gateway.yaml
+kubectl create -f /tmp/mongo-secret.yaml
+kubectl create -f /tmp/elastic-search-secret.yaml
+kubectl create -f /tmp/deployment-gateway.yaml
+kubectl create -f ./Gravitee/GKE/Gateway/expose-gravitee-gateway.yaml
 
 # Export IP address of exposed Gravitee Gateway service
 GRAVITEE_GATEWAY_HOST=$(kubectl get svc/service-gravitee-gateway -o yaml | grep ip | cut -d':' -f 2 | cut -d' ' -f 2)
@@ -69,3 +69,7 @@ echo
 
 sleep 30 # Waiting service to be expose (GKE Load Balancer might take sometime to do it)
 echo "Gateway is exposed at http://${GRAVITEE_GATEWAY_HOST}:${GRAVITEE_GATEWAY_PORT}"
+
+rm /tmp/mongo-secret.yaml
+rm /tmp/elastic-search-secret.yaml
+rm /tmp/deployment-gateway.yaml
