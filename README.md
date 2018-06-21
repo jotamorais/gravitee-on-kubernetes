@@ -35,7 +35,9 @@ To reflect the aforementioned structure, the repository is organized as:
 
 ```
 README.md
-deploy.sh
+deploy-to-gke.sh
+deploy-to-ake.sh
+...
 Elasticsearch
 └───GKE
 │   └───Elasticsearch
@@ -74,39 +76,39 @@ First thing I have to populate the required script variable values:
 # Input variables
 ## For MongoDB
 ```shell
-$ MONGO_ROOT_USER=main_admin
-$ MONGO_ROOT_PASSWORD=abc123
-$ MONGO_DEFAULT_REGION_ZONE=us-central1-a
-$ MONGO_CLUSTER_NAME=gke-mongodb-cluster
+$ export MONGO_ROOT_USER=main_admin
+$ export MONGO_ROOT_PASSWORD=abc123
+$ export MONGO_DEFAULT_REGION_ZONE=us-central1-a
+$ export MONGO_CLUSTER_NAME=gke-mongodb-cluster
 ```
 ## For Elasticsearch
 ```
-$ ELASTIC_DEFAULT_REGION_ZONE=us-east4-a
-$ ELASTIC_CLUSTER_NAME=gke-elasticsearch-cluster
+$ export ELASTIC_DEFAULT_REGION_ZONE=us-east4-a
+$ export ELASTIC_CLUSTER_NAME=gke-elasticsearch-cluster
 ```
 
 ## For Gravitee
 ```
-$ GRAVITEE_DEFAULT_REGION_ZONE=us-west1-a
-$ GRAVITEE_CLUSTER_NAME=apim-gravitee-cluster
-$ GRAVITEE_MONGO_DBNAME=gravitee
-$ GRAVITEE_MONGO_USERNAME=gravitee
-$ GRAVITEE_MONGO_PASSWORD=gravitee123
+$ export GRAVITEE_DEFAULT_REGION_ZONE=us-west1-a
+$ export GRAVITEE_CLUSTER_NAME=apim-gravitee-cluster
+$ export GRAVITEE_MONGO_DBNAME=gravitee
+$ export GRAVITEE_MONGO_USERNAME=gravitee
+$ export GRAVITEE_MONGO_PASSWORD=gravitee123
 ```
 
 ### For Gravitee Gateway
 ```
-$ GRAVITEE_GATEWAY_REPLICAS_QTY=2
+$ export GRAVITEE_GATEWAY_REPLICAS_QTY=2
 ```
 
 ### For Gravitee Management API
 ```
-$ GRAVITEE_MANAGEMENT_REPLICAS_QTY=1
+$ export GRAVITEE_MANAGEMENT_REPLICAS_QTY=1
 ```
 
 ### For Gravitee Portal
 ```
-$ GRAVITEE_PORTAL_REPLICAS_QTY=2
+$ export GRAVITEE_PORTAL_REPLICAS_QTY=2
 ```
 
 # Output variables

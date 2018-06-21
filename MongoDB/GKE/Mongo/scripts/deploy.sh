@@ -21,7 +21,14 @@
 # $ GRAVITEE_MONGO_PASSWORD=gravitee123
 ##
 
-NEW_PASSWORD=$MONGO_ROOT_PASSWORD
+parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+echo Parent path is "${parent_path}"
+cd "${parent_path}"
+
+NEW_PASSWORD="${MONGO_ROOT_PASSWORD}"
+
+
+echo Setting default region to "${MONGO_DEFAULT_REGION_ZONE}"
 
 # Set default region/zone
 gcloud config set compute/zone $MONGO_DEFAULT_REGION_ZONE
@@ -32,11 +39,11 @@ echo "Creating GKE Cluster"
 gcloud container clusters create "${MONGO_CLUSTER_NAME}" --image-type=UBUNTU --machine-type=n1-standard-2
 
 # Switch context to the newly created cluster
-kubectl config use-context ${MONGO_CLUSTER_NAME}
+kubectl config use-context "${MONGO_CLUSTER_NAME}"
 
 # Configure host VM using daemonset to disable hugepages
 echo "Deploying GKE Daemon Set"
-kubectl apply -f ./resources/hostvm-node-configurer-daemonset.yaml
+kubectl apply -f ./MongoDB/GKE/Mongo/resources/hostvm-node-configurer-daemonset.yaml
 
 
 # Define storage class for dynamically generated persistent volumes
@@ -64,13 +71,13 @@ echo "Creating GKE Persistent Volumes"
 for i in 1 2 3
 do
     # Replace text stating volume number + size of disk (set to 4)
-    sed -e "s/INST/${i}/g; s/SIZE/4/g" ./resources/xfs-gce-ssd-persistentvolume.yaml > /tmp/xfs-gce-ssd-persistentvolume.yaml
+    sed -e "s/INST/${i}/g; s/SIZE/4/g" ./MongoDB/GKE/Mongo/resources/xfs-gce-ssd-persistentvolume.yaml > /tmp/xfs-gce-ssd-persistentvolume.yaml
     kubectl apply -f /tmp/xfs-gce-ssd-persistentvolume.yaml
 done
 for i in 1 2 3 4 5 6 7 8 9
 do
     # Replace text stating volume number + size of disk (set to 8)
-    sed -e "s/INST/${i}/g; s/SIZE/8/g" ./resources/xfs-gce-ssd-persistentvolume.yaml > /tmp/xfs-gce-ssd-persistentvolume.yaml
+    sed -e "s/INST/${i}/g; s/SIZE/8/g" ./MongoDB/GKE/Mongo/resources/xfs-gce-ssd-persistentvolume.yaml > /tmp/xfs-gce-ssd-persistentvolume.yaml
     kubectl apply -f /tmp/xfs-gce-ssd-persistentvolume.yaml
 done
 rm /tmp/xfs-gce-ssd-persistentvolume.yaml
@@ -86,23 +93,23 @@ rm $TMPFILE
 
 # Deploy a MongoDB ConfigDB Service ("Config Server Replica Set") using a Kubernetes StatefulSet
 echo "Deploying GKE StatefulSet & Service for MongoDB Config Server Replica Set"
-kubectl apply -f ./resources/mongodb-configdb-service.yaml
+kubectl apply -f ./MongoDB/GKE/Mongo/resources/mongodb-configdb-service.yaml
 
 
 # Deploy each MongoDB Shard Service using a Kubernetes StatefulSet
 echo "Deploying GKE StatefulSet & Service for each MongoDB Shard Replica Set"
-sed -e 's/shardX/shard1/g; s/ShardX/Shard1/g' ./resources/mongodb-maindb-service.yaml > /tmp/mongodb-maindb-service.yaml
+sed -e 's/shardX/shard1/g; s/ShardX/Shard1/g' ./MongoDB/GKE/Mongo/resources/mongodb-maindb-service.yaml > /tmp/mongodb-maindb-service.yaml
 kubectl apply -f /tmp/mongodb-maindb-service.yaml
-sed -e 's/shardX/shard2/g; s/ShardX/Shard2/g' ./resources/mongodb-maindb-service.yaml > /tmp/mongodb-maindb-service.yaml
+sed -e 's/shardX/shard2/g; s/ShardX/Shard2/g' ./MongoDB/GKE/Mongo/resources/mongodb-maindb-service.yaml > /tmp/mongodb-maindb-service.yaml
 kubectl apply -f /tmp/mongodb-maindb-service.yaml
-sed -e 's/shardX/shard3/g; s/ShardX/Shard3/g' ./resources/mongodb-maindb-service.yaml > /tmp/mongodb-maindb-service.yaml
+sed -e 's/shardX/shard3/g; s/ShardX/Shard3/g' ./MongoDB/GKE/Mongo/resources/mongodb-maindb-service.yaml > /tmp/mongodb-maindb-service.yaml
 kubectl apply -f /tmp/mongodb-maindb-service.yaml
 rm /tmp/mongodb-maindb-service.yaml
 
 
 # Deploy some Mongos Routers using a Kubernetes StatefulSet
 echo "Deploying GKE Deployment & Service for some Mongos Routers"
-kubectl apply -f ./resources/mongodb-mongos-service.yaml
+kubectl apply -f ./MongoDB/GKE/Mongo/resources/mongodb-mongos-service.yaml
 
 # Wait until the final mongod of each Shard + the ConfigDB has started properly
 echo
@@ -173,23 +180,23 @@ kubectl exec mongos-router-0 -c mongos-container -- mongo --eval 'sh.addShard("S
 sleep 3
 
 # Look up and replace placeholders with variable values
-sed -i -e "s|MONGO_ROOT_USER|${MONGO_ROOT_USER:-default main_admin}|g" ./add-gravitee-mongo-user.sh
-sed -i -e "s|MONGO_ROOT_PASSWORD|${MONGO_ROOT_PASSWORD:-default abc123}|g" ./add-gravitee-mongo-user.sh
-sed -i -e "s|GRAVITEE_MONGO_DBNAME|${GRAVITEE_MONGO_DBNAME:-default gravitee}|g" ./add-gravitee-mongo-user.sh
-sed -i -e "s|GRAVITEE_MONGO_USERNAME|${GRAVITEE_MONGO_USERNAME:-default gravitee}|g" ./add-gravitee-mongo-user.sh
-sed -i -e "s|GRAVITEE_MONGO_PASSWORD|${GRAVITEE_MONGO_PASSWORD:-default gravitee123}|g" ./add-gravitee-mongo-user.sh 
+sed -i -e "s|MONGO_ROOT_USER|${MONGO_ROOT_USER:-default main_admin}|g" ./MongoDB/GKE/Mongo/scripts/add-gravitee-mongo-user.sh
+sed -i -e "s|MONGO_ROOT_PASSWORD|${MONGO_ROOT_PASSWORD:-default abc123}|g" ./MongoDB/GKE/Mongo/scripts/add-gravitee-mongo-user.sh
+sed -i -e "s|GRAVITEE_MONGO_DBNAME|${GRAVITEE_MONGO_DBNAME:-default gravitee}|g" ./MongoDB/GKE/Mongo/scripts/add-gravitee-mongo-user.sh
+sed -i -e "s|GRAVITEE_MONGO_USERNAME|${GRAVITEE_MONGO_USERNAME:-default gravitee}|g" ./MongoDB/GKE/Mongo/scripts/add-gravitee-mongo-user.sh
+sed -i -e "s|GRAVITEE_MONGO_PASSWORD|${GRAVITEE_MONGO_PASSWORD:-default gravitee123}|g" ./MongoDB/GKE/Mongo/scripts/add-gravitee-mongo-user.sh
 
 # Create the Admin User (this will automatically disable the localhost exception)
 echo "Creating user: 'main_admin'"
 kubectl exec mongos-router-0 -c mongos-container -- mongo --eval 'db.getSiblingDB("admin").createUser({user:"'"${MONGO_ROOT_USER}"'",pwd:"'"${MONGO_ROOT_PASSWORD}"'",roles:[{role:"root",db:"admin"}]});exit;'
 
 echo "Creating user: '${GRAVITEE_MONGO_USERNAME}'"
-kubectl exec -it mongos-router-0 -c mongos-container bash < add-gravitee-mongo-user.sh
+kubectl exec -it mongos-router-0 -c mongos-container bash < ./MongoDB/GKE/Mongo/scripts/add-gravitee-mongo-user.sh
 echo
 
 # Expose MongoDB using LoadBalancer
 echo "Exposing MongoDB"
-kubectl apply -f ./resources/mongo-expose-service.yaml
+kubectl apply -f ./MongoDB/GKE/Mongo/resources/mongo-expose-service.yaml
 sleep 30 # Waiting service to be expose (GKE Load Balancer might take sometime to do it)
 
 
